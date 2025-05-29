@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Contact {
+  id            Int       @id @default(autoincrement())
+  phoneNumber   String?   @db.VarChar(30)
+  email         String?   @db.VarChar(191)
+  linkedId      Int?
+  linkPrecedence String    @default("primary") /// "primary" | "secondary"
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  // self-relation
+  parent        Contact?  @relation("ContactParent", fields: [linkedId], references: [id])
+  children      Contact[] @relation("ContactParent") // all secondaries
+}
